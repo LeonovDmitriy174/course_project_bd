@@ -1,8 +1,9 @@
 import requests
 import os
 import psycopg2
+import sys
 
-from src.classes import Employee
+from src.classes import Employee, DBManager
 
 
 PASSWORD_POSTGRES = os.environ.get('PASSWORD_POSTGRES')
@@ -108,3 +109,31 @@ def save_data_to_database(global_world):
                                                                                       index + 1))
     cur.close()
     conn.close()
+
+
+def is_stop(word):
+    if word.upper() == "STOP":
+        sys.exit()
+
+
+def check(user_answer):
+    is_stop(user_answer)
+    try:
+        user_ch = int(user_answer)
+    except:
+        return False
+    else:
+        data_from_bd = DBManager()
+        if user_ch == 1:
+            data_from_bd.get_companies_and_vacancies_count()
+        elif user_ch == 2:
+            data_from_bd.get_all_vacancies()
+        elif user_ch == 3:
+            print("Средняя зарплата составляет:")
+            data_from_bd.get_avg_salary()
+        elif user_ch == 4:
+            data_from_bd.get_vacancies_with_higher_salary()
+        elif user_ch == 5:
+            keyword = input("Введите ключевое слово: ")
+            data_from_bd.get_vacancies_with_keyword(keyword)
+        return True
